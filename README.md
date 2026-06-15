@@ -1,4 +1,4 @@
-# SmartLost
+# Lost&Foud
 
 A web-based Lost and Found Management System for students and staff.
 
