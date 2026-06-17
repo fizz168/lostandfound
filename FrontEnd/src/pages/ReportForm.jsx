@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function ReportForm({ type, addItem }) {
   const navigate = useNavigate()
+  const formRef = useRef(null)
   const [step, setStep] = useState(1);
   const [form, setForm] = useState({ name:"", category:"", description:"", date:"", location:"", contactEmail:"", contactPhone:"" });
   const [submitted, setSubmitted] = useState(false);
@@ -12,7 +13,19 @@ function ReportForm({ type, addItem }) {
     ? "https://images.unsplash.com/photo-1530124566582-a618bc2615dc?w=400&q=80"
     : "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&q=80"
 
-  const handleSubmit = () => {
+  const goToNextStep = () => {
+    if (formRef.current?.reportValidity()) {
+      setStep(2)
+    }
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    if (!formRef.current?.reportValidity()) {
+      return
+    }
+
     const newItem = {
       id: Date.now(),
       type,
@@ -67,7 +80,7 @@ function ReportForm({ type, addItem }) {
         <span className="text-xs text-gray-400">Step {step} of 2</span>
       </div>
  
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
+      <form ref={formRef} onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
         {step === 1 ? (
           <>
             <h2 className="font-semibold text-gray-700">Item Information</h2>
@@ -80,22 +93,22 @@ function ReportForm({ type, addItem }) {
               <div key={f.key}>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">{f.label}</label>
                 {f.textarea
-                  ? <textarea value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} rows={3}
+                  ? <textarea value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} rows={3} required
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300 resize-none" />
-                  : <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} type={f.type || "text"}
+                  : <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} type={f.type || "text"} required
                       className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300" />
                 }
               </div>
             ))}
             <div>
               <label className="block text-xs font-semibold text-gray-500 mb-1">Category *</label>
-              <select value={form.category} onChange={e => set("category", e.target.value)}
+              <select value={form.category} onChange={e => set("category", e.target.value)} required
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300 bg-white">
                 <option value="">Select a category</option>
                 {["Electronics","Personal Items","Bags","Books","Keys","School Supplies","Other"].map(c => <option key={c}>{c}</option>)}
               </select>
             </div>
-            <button onClick={() => setStep(2)} className={`w-full ${accent} ${accentHover} text-gray-600 font-semibold py-2.5 rounded-xl transition-colors text-sm`}>
+            <button type="button" onClick={goToNextStep} className={`w-full ${accent} ${accentHover} text-gray-600 font-semibold py-2.5 rounded-xl transition-colors text-sm`}>
               Next: Contact & Upload →
             </button>
           </>
@@ -108,7 +121,7 @@ function ReportForm({ type, addItem }) {
             ].map(f => (
               <div key={f.key}>
                 <label className="block text-xs font-semibold text-gray-500 mb-1">{f.label}</label>
-                <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} type={f.type}
+                <input value={form[f.key]} onChange={e => set(f.key, e.target.value)} placeholder={f.placeholder} type={f.type} required={f.key === "contactEmail"}
                   className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300" />
               </div>
             ))}
@@ -119,12 +132,12 @@ function ReportForm({ type, addItem }) {
               </div>
             </div>
             <div className="flex gap-3">
-              <button onClick={() => setStep(1)} className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-sm">← Back</button>
-              <button onClick={handleSubmit} className={`flex-1 ${accent} ${accentHover} text-gray-600 font-semibold py-2.5 rounded-xl transition-colors text-sm`}>Submit Report</button>
+              <button type="button" onClick={() => setStep(1)} className="flex-1 border border-gray-200 text-gray-600 font-semibold py-2.5 rounded-xl hover:bg-gray-50 transition-colors text-sm">← Back</button>
+              <button type="submit" className={`flex-1 ${accent} ${accentHover} text-gray-600 font-semibold py-2.5 rounded-xl transition-colors text-sm`}>Submit Report</button>
             </div>
           </>
         )}
-      </div>
+      </form>
     </div>
   );
 }

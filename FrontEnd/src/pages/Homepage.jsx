@@ -27,20 +27,6 @@ function HomePage({ items }) {
           Report Found Item
         </button>
       </div>
-      {/* <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-        {[
-          { label: "Active Items",   val: 7,  sub: "Currently being tracked", color: "text-indigo-600" },
-          { label: "Lost Items",     val: 3,  sub: "Reported by students",    color: "text-red-500" },
-          { label: "Found Items",    val: 6,  sub: "Waiting to be claimed",   color: "text-blue-500" },
-          { label: "Returned",       val: 1,  sub: "Successfully reunited",   color: "text-green-500" },
-        ].map(s => (
-          <div key={s.label} className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 text-center">
-            <div className={`text-3xl font-bold ${s.color}`}>{s.val}</div>
-            <div className="text-sm font-semibold text-gray-700 mt-1">{s.label}</div>
-            <div className="text-xs text-gray-400 mt-0.5">{s.sub}</div>
-          </div>
-        ))}
-      </div> */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-bold text-gray-800">Recent Lost Items</h2>

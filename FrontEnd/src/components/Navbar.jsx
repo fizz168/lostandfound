@@ -19,7 +19,6 @@ function Navbar({ authed, setAuthed }) {
       </nav>
     )
   }
-
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between h-14">
@@ -48,21 +47,7 @@ function Navbar({ authed, setAuthed }) {
             </button>
           ))}
         </div>
-
-        {/* Right Actions */}
         <div className="flex items-center gap-2">
-          {/* <button
-            onClick={() => navigate("/report-found")}
-            className="hidden md:block text-sm border border-indigo-200 text-indigo-600 px-3 py-1.5 rounded-lg hover:bg-indigo-50 transition-colors"
-          >
-            Report Found
-          </button>
-          <button
-            onClick={() => navigate("/report-lost")}
-            className="hidden md:block text-sm border border-red-200 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-50 transition-colors"
-          >
-            Report Lost
-          </button> */}
           {authed ? (
             <button
               onClick={() => {
