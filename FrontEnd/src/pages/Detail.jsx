@@ -9,7 +9,7 @@ function Detail({ items }) {
   if (!item) return <Navigate to="/browse" replace />;
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <button onClick={() => navigate("/browse")} className="text-sm text-indigo-600 hover:underline mb-6 flex items-center gap-1">← Back</button>
+      <button onClick={() => navigate("/")} className="text-sm text-indigo-600 hover:underline mb-6 flex items-center gap-1">← Back</button>
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <img src={item.img} alt={item.name} className="w-full h-56 object-cover" />
         <div className="p-6">
