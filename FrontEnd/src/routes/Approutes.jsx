@@ -8,19 +8,76 @@ import Admin from "../pages/Admin";
 import ReportForm from "../pages/ReportForm";
 import Claim from "../pages/Claim";
 
-export default function AppRoutes({ items, addItem, setAuthed }) {
+function RequireAuth({ authed, children }) {
+  if (!authed) {
+    return <Navigate to="/login" replace />
+  }
+
+  return children
+}
+
+export default function AppRoutes({ items, addItem, authed, setAuthed }) {
   return (
     <Routes>
-      <Route path="/" element={<Home items={items} />} />
+      <Route path="/login" element={authed ? <Navigate to="/" replace /> : <Login setAuthed={setAuthed} />} />
+      <Route
+        path="/"
+        element={
+          <RequireAuth authed={authed}>
+            <Home items={items} />
+          </RequireAuth>
+        }
+      />
       <Route path="/home" element={<Navigate to="/" replace />} />
-      <Route path="/browse" element={<Browse items={items} />} />
-      <Route path="/detail/:id" element={<Detail items={items} />} />
-      <Route path="/claim/:id" element={<Claim items={items} />} />
-      <Route path="/login" element={<Login setAuthed={setAuthed} />} />
-      <Route path="/admin" element={<Admin />} />
-      <Route path="/report-lost" element={<ReportForm type="lost" addItem={addItem} />} />
-      <Route path="/report-found" element={<ReportForm type="found" addItem={addItem} />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="/browse"
+        element={
+          <RequireAuth authed={authed}>
+            <Browse items={items} />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/detail/:id"
+        element={
+          <RequireAuth authed={authed}>
+            <Detail items={items} />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/claim/:id"
+        element={
+          <RequireAuth authed={authed}>
+            <Claim items={items} />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/admin"
+        element={
+          <RequireAuth authed={authed}>
+            <Admin />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/report-lost"
+        element={
+          <RequireAuth authed={authed}>
+            <ReportForm type="lost" addItem={addItem} />
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/report-found"
+        element={
+          <RequireAuth authed={authed}>
+            <ReportForm type="found" addItem={addItem} />
+          </RequireAuth>
+        }
+      />
+      <Route path="*" element={<Navigate to={authed ? "/" : "/login"} replace />} />
     </Routes>
   );
 }

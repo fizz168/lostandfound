@@ -6,6 +6,7 @@ import AppRoutes from './routes/Approutes'
 import DEFAULT_ITEMS from './data/item'
 
 const ITEMS_STORAGE_KEY = 'lostandfound-items'
+const AUTH_STORAGE_KEY = 'lostandfound-authed'
 
 function getInitialItems() {
   if (typeof window === 'undefined') {
@@ -25,13 +26,29 @@ function getInitialItems() {
   }
 }
 
+function getInitialAuthed() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  try {
+    return window.localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
+  } catch {
+    return false
+  }
+}
+
 function App() {
-  const [authed, setAuthed] = useState(false)
+  const [authed, setAuthed] = useState(getInitialAuthed)
   const [items, setItems] = useState(getInitialItems)
 
   useEffect(() => {
     window.localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(items))
   }, [items])
+
+  useEffect(() => {
+    window.localStorage.setItem(AUTH_STORAGE_KEY, String(authed))
+  }, [authed])
 
   const addItem = (newItem) => {
     setItems(currentItems => [newItem, ...currentItems])
@@ -44,6 +61,7 @@ function App() {
         <AppRoutes
           items={items}
           addItem={addItem}
+          authed={authed}
           setAuthed={setAuthed}
         />
       </main>

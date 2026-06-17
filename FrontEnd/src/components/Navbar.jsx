@@ -4,7 +4,21 @@ import { useLocation, useNavigate } from 'react-router-dom'
 function Navbar({ authed, setAuthed }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
+  const isLoginPage = pathname === '/login'
   const activePath = pathname === '/' ? 'home' : pathname.split('/')[1]
+
+  if (isLoginPage) {
+    return (
+      <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
+        <div className="max-w-6xl mx-auto px-4 flex items-center h-14">
+          <button onClick={() => navigate("/")} className="flex items-center gap-2 font-bold text-lg text-indigo-600">
+            <span className="bg-indigo-600 text-white rounded-lg w-7 h-7 flex items-center justify-center text-sm font-black">L</span>
+            Lost&amp;Found
+          </button>
+        </div>
+      </nav>
+    )
+  }
 
   return (
     <nav className="bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
