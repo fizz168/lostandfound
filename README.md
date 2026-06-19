@@ -1,4 +1,4 @@
-# Lost&Foud
+# Lost&Found
 
 A web-based Lost and Found Management System for students and staff.
 
@@ -14,8 +14,8 @@ A web-based Lost and Found Management System for students and staff.
 - React
 - Vite
 - Tailwind CSS
-- Node.js (planned)
-- MySQL (planned)
+- Node.js 
+- MySQL 
 
 ## Team Members
 - Nhean Omra
