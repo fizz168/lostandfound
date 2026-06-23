@@ -19,17 +19,16 @@ function ReportForm({ type, addItem }) {
     }
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
 
     if (!formRef.current?.reportValidity()) {
       return
     }
 
-    const newItem = {
-      id: Date.now(),
+    const payload = {
       type,
-      status: type === "found" ? "unclaimed" : "active",
+      status: type === "found" ? "unclaimed" : "lost",
       name: form.name || `${type === "found" ? "Found" : "Lost"} Item`,
       category: form.category || "Other",
       description: form.description || "No description provided.",
@@ -41,11 +40,26 @@ function ReportForm({ type, addItem }) {
       img: defaultImage,
     }
 
-    if (addItem) {
-      addItem(newItem)
-    }
+    try {
+      const apiBase = import.meta.env.VITE_API_BASE || ''
+      const res = await fetch(`${apiBase}/api/items`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
 
-    setSubmitted(true)
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error || 'Failed to submit report')
+      }
+
+      const created = await res.json()
+      if (addItem) addItem(created)
+      setSubmitted(true)
+    } catch (err) {
+      // basic error handling; show browser alert for now
+      alert(err.message || 'Submission failed')
+    }
   }
  
   if (submitted) return (

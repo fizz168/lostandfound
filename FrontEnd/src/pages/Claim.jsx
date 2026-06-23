@@ -1,4 +1,5 @@
 import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
 
 function Claim({ items }) {
   const navigate = useNavigate()
@@ -16,7 +17,7 @@ function Claim({ items }) {
     return null
   }
 
-  const apiBase = process.env.REACT_APP_API_BASE || 'http://localhost:4000'
+  const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
 
   async function handleSubmit(e) {
     e.preventDefault()
