@@ -55,7 +55,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F0F0F0]">
       <Navbar authed={authed} setAuthed={setAuthed} />
       <main>
         <AppRoutes

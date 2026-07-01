@@ -1,49 +1,83 @@
+
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function Login({ setAuthed }) {
   const navigate = useNavigate()
-  const [email, setEmail] = useState("");
-  const [pass, setPass] = useState("");
+  const [email, setEmail] = useState('')
+  const [pass, setPass] = useState('')
 
   const handleSubmit = (event) => {
     event.preventDefault()
     setAuthed(true)
-    navigate("/")
+    navigate('/')
   }
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 ">
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-6">
-          <div className="inline-flex bg-indigo-600 text-white rounded-xl w-10 h-10 items-center justify-center text-lg font-black mb-3">L</div>
-          <h1 className="text-xl font-bold text-gray-800">Lost&amp;Found</h1>
-          <p className="text-sm text-gray-500">Welcome back — sign in to continue</p>
-        </div>
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">University Email</label>
-            <input value={email} onChange={e => setEmail(e.target.value)} placeholder="you@university.edu" type="email" required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300" />
+    <div className="flex min-h-[78vh] items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="border-4 border-black bg-white p-6 shadow-[8px_8px_0px_0px_#121212] sm:p-8">
+          <div className="mb-6 text-center">
+            <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center border-4 border-black bg-[#F0C020] shadow-[4px_4px_0px_0px_#121212]">
+              <span className="text-2xl font-black text-black">L</span>
+            </div>
+            <h2 className="text-3xl font-black uppercase tracking-[-0.05em] text-black">Lost&amp;Found</h2>
+            <p className="mt-2 text-sm font-medium text-black/60">Welcome back — sign in to continue</p>
           </div>
-          <div>
-            <label className="block text-xs font-semibold text-gray-500 mb-1">Password</label>
-            <input value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" type="password" required
-              className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-300" />
-          </div>
-          <div className="flex items-center justify-between text-xs text-gray-500">
-            <label className="flex items-center gap-1 cursor-pointer"><input type="checkbox" className="rounded" /> Remember me</label>
-            <button className="text-indigo-600 hover:underline">Forgot password?</button>
-          </div>
-          <button type="submit"
-            className="w-full bg-indigo-600 hover:bg-indigo-700 text-blue-600 font-semibold py-2.5 rounded-xl transition-colors text-sm">
-            Sign In
-          </button>
 
-        </form>
-        <p className="text-center text-xs text-gray-400 mt-4">By continuing, you agree to our Terms of Service and Privacy Policy</p>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.35em] text-black/60">
+                University Email
+              </label>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@university.edu"
+                type="email"
+                required
+                className="w-full border-2 border-black bg-[#F0F0F0] px-3 py-3 text-sm outline-none placeholder:text-black/35 focus:border-[#1040C0]"
+              />
+            </div>
+
+            <div>
+              <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.35em] text-black/60">
+                Password
+              </label>
+              <input
+                value={pass}
+                onChange={(e) => setPass(e.target.value)}
+                placeholder="••••••••"
+                type="password"
+                required
+                className="w-full border-2 border-black bg-[#F0F0F0] px-3 py-3 text-sm outline-none placeholder:text-black/35 focus:border-[#1040C0]"
+              />
+            </div>
+
+            <div className="flex items-center justify-between gap-3 pt-1 text-xs font-bold uppercase tracking-[0.2em] text-black/60">
+              <label className="flex items-center gap-2">
+                <input type="checkbox" className="h-4 w-4 border-2 border-black accent-[#1040C0]" />
+                <span>Remember me</span>
+              </label>
+              <button type="button" className="hover:text-[#1040C0]">
+                Forgot password?
+              </button>
+            </div>
+
+            <button
+              type="submit"
+              className="w-full border-2 border-black bg-[#D02020] px-4 py-3 text-sm font-black uppercase tracking-[0.3em] text-white shadow-[4px_4px_0px_0px_#121212] transition-all duration-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
+            >
+              Sign In
+            </button>
+          </form>
+
+          <p className="mt-4 text-center text-[10px] font-bold uppercase tracking-[0.3em] text-black/40">
+            By continuing, you agree to our Terms of Service and Privacy Policy
+          </p>
+        </div>
       </div>
     </div>
-  );
+  )
 }
 export default Login;
