@@ -28,7 +28,7 @@ function ReportForm({ type, addItem }) {
 
     const payload = {
       type,
-      status: type === "found" ? "unclaimed" : "lost",
+      status: type === "found" ? "found" : "lost",
       name: form.name || `${type === "found" ? "Found" : "Lost"} Item`,
       category: form.category || "Other",
       description: form.description || "No description provided.",
@@ -97,6 +97,10 @@ function ReportForm({ type, addItem }) {
       <form ref={formRef} onSubmit={handleSubmit} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-4">
         {step === 1 ? (
           <>
+            <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm">
+              <span className="text-gray-600">Status: </span>
+              <span className="font-semibold text-blue-600">{type === "found" ? "Found" : "Lost"}</span>
+            </div>
             <h2 className="font-semibold text-gray-700">Item Information</h2>
             {[
               { label: "Item Name *", key: "name", placeholder: type === "found" ? "e.g., Wallet, Keys, Laptop" : "e.g., MacBook Pro, Blue Backpack" },

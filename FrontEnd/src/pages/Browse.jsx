@@ -32,7 +32,7 @@ function Browse({ items }) {
         {[
           { label: "Type", value: typeFilter, options: ["All Items","Lost","Found"], set: setTypeFilter },
           { label: "Category", value: catFilter, options: categories, set: setCatFilter },
-          { label: "Status", value: statusFilter, options: ["All Status","active","unclaimed","claimed","returned"], set: setStatusFilter },
+          { label: "Status", value: statusFilter, options: ["All Status","found","lost"], set: setStatusFilter },
         ].map(f => (
           <div key={f.label} className="flex flex-col gap-1">
             <span className="text-xs text-gray-500 font-medium">{f.label}</span>
