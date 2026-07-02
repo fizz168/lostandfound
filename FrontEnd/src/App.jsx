@@ -3,67 +3,38 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import AppRoutes from './routes/Approutes'
-import DEFAULT_ITEMS from './data/item'
-
-const ITEMS_STORAGE_KEY = 'lostandfound-items'
-const AUTH_STORAGE_KEY = 'lostandfound-authed'
-
-function getInitialItems() {
-  if (typeof window === 'undefined') {
-    return DEFAULT_ITEMS
-  }
-
-  try {
-    const savedItems = window.localStorage.getItem(ITEMS_STORAGE_KEY)
-    if (!savedItems) {
-      return DEFAULT_ITEMS
-    }
-
-    const parsedItems = JSON.parse(savedItems)
-    return Array.isArray(parsedItems) ? parsedItems : DEFAULT_ITEMS
-  } catch {
-    return DEFAULT_ITEMS
-  }
-}
-
-function getInitialAuthed() {
-  if (typeof window === 'undefined') {
-    return false
-  }
-
-  try {
-    return window.localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
 
 function App() {
-  const [authed, setAuthed] = useState(getInitialAuthed)
-  const [items, setItems] = useState(getInitialItems)
+  const [authed, setAuthed] = useState(() => {
+    if (typeof window === 'undefined') return false
+    return window.localStorage.getItem('lostandfound-authed') === 'true'
+  })
+  const [items, setItems] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    window.localStorage.setItem(ITEMS_STORAGE_KEY, JSON.stringify(items))
-  }, [items])
-
-  useEffect(() => {
-    window.localStorage.setItem(AUTH_STORAGE_KEY, String(authed))
+    window.localStorage.setItem('lostandfound-authed', String(authed))
   }, [authed])
 
-  const addItem = (newItem) => {
-    setItems(currentItems => [newItem, ...currentItems])
-  }
+  useEffect(() => {
+    fetch('/api/items')
+      .then((res) => res.json())
+      .then((data) => {
+        setItems(Array.isArray(data) ? data : [])
+      })
+      .catch((error) => {
+        console.error('Failed to load items', error)
+      })
+      .finally(() => {
+        setLoading(false)
+      })
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
       <Navbar authed={authed} setAuthed={setAuthed} />
       <main>
-        <AppRoutes
-          items={items}
-          addItem={addItem}
-          authed={authed}
-          setAuthed={setAuthed}
-        />
+        <AppRoutes items={items} addItem={setItems} authed={authed} setAuthed={setAuthed} />
       </main>
       <Footer />
     </div>
