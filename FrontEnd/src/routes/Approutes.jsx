@@ -16,10 +16,22 @@ function RequireAuth({ authed, children }) {
   return children
 }
 
-export default function AppRoutes({ items, addItem, authed, setAuthed }) {
+function RequireAdmin({ authed, user, children }) {
+  if (!authed) {
+    return <Navigate to="/login" replace />
+  }
+
+  if (!user?.isAdmin) {
+    return <Navigate to="/" replace />
+  }
+
+  return children
+}
+
+export default function AppRoutes({ items, addItem, authed, user, setAuthed, setUser, setToken }) {
   return (
     <Routes>
-      <Route path="/login" element={authed ? <Navigate to="/" replace /> : <Login setAuthed={setAuthed} />} />
+      <Route path="/login" element={authed ? <Navigate to="/" replace /> : <Login setAuthed={setAuthed} setUser={setUser} setToken={setToken} />} />
       <Route
         path="/"
         element={
@@ -56,9 +68,9 @@ export default function AppRoutes({ items, addItem, authed, setAuthed }) {
       <Route
         path="/admin"
         element={
-          <RequireAuth authed={authed}>
+          <RequireAdmin authed={authed} user={user}>
             <Admin />
-          </RequireAuth>
+          </RequireAdmin>
         }
       />
       <Route

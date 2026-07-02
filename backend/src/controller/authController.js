@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { User } = require('../models/User') // adjust if your export differs
+const User = require('../models/User')
 
 // POST /api/auth/login
 const login = async (req, res) => {
@@ -17,16 +17,29 @@ const login = async (req, res) => {
       return res.status(401).json({ error: 'Invalid email or password.' })
     }
 
-    // If passwords are plain text right now, replace next 3 lines with:
-    // if (user.password !== password) { return res.status(401)... }
-    const isMatch = await bcrypt.compare(password, user.password)
+    let isMatch = false
+    if (user.passwordHash && typeof user.passwordHash === 'string') {
+      const isBcryptHash = user.passwordHash.startsWith('$2a$') || user.passwordHash.startsWith('$2b$') || user.passwordHash.startsWith('$2y$')
+      if (isBcryptHash) {
+        isMatch = await bcrypt.compare(password, user.passwordHash)
+      } else {
+        isMatch = password === user.passwordHash
+      }
+    }
+
     if (!isMatch) {
       return res.status(401).json({ error: 'Invalid email or password.' })
     }
 
+    const jwtSecret = process.env.JWT_SECRET
+    if (!jwtSecret) {
+      console.error('JWT_SECRET is not configured')
+      return res.status(500).json({ error: 'Server error: JWT secret is not configured.' })
+    }
+
     const token = jwt.sign(
-      { id: user.id, email: user.email, role: user.role },
-      process.env.JWT_SECRET,
+      { id: user.id, email: user.email, isAdmin: user.isAdmin },
+      jwtSecret,
       { expiresIn: '7d' }
     )
 
@@ -34,14 +47,30 @@ const login = async (req, res) => {
       token,
       user: {
         id: user.id,
-        full_name: user.full_name,
+        name: user.name,
         email: user.email,
-        role: user.role,
+        isAdmin: user.isAdmin,
       },
     })
   } catch (err) {
     console.error('Login error:', err)
     res.status(500).json({ error: 'Server error during login.' })
+  }
+}
+
+const me = async (req, res) => {
+  try {
+    const user = await User.findByPk(req.user.id, {
+      attributes: ['id', 'name', 'email', 'isAdmin'],
+    })
+    if (!user) {
+      return res.status(404).json({ error: 'User not found.' })
+    }
+
+    res.json(user)
+  } catch (err) {
+    console.error('Get profile error:', err)
+    res.status(500).json({ error: 'Failed to fetch user profile.' })
   }
 }
 
@@ -60,7 +89,7 @@ const register = async (req, res) => {
     }
 
     const hashed = await bcrypt.hash(password, 10)
-    await User.create({ full_name, email, password: hashed, role: 'student' })
+    await User.create({ name: full_name, email, passwordHash: hashed, isAdmin: false })
 
     res.status(201).json({ message: 'Account created. Please log in.' })
   } catch (err) {
@@ -69,4 +98,4 @@ const register = async (req, res) => {
   }
 }
 
-module.exports = { login, register }
+module.exports = { login, register, me }

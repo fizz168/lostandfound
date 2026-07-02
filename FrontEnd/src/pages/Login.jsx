@@ -2,15 +2,37 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-function Login({ setAuthed }) {
+function Login({ setAuthed, setUser, setToken }) {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [pass, setPass] = useState('')
+  const [error, setError] = useState('')
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
-    setAuthed(true)
-    navigate('/')
+    setError('')
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: pass }),
+      })
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Unable to log in.')
+        return
+      }
+
+      setToken(data.token)
+      setUser(data.user)
+      setAuthed(true)
+      navigate('/')
+    } catch (err) {
+      console.error('Login failed', err)
+      setError('Unable to log in.')
+    }
   }
 
   return (
@@ -26,6 +48,7 @@ function Login({ setAuthed }) {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            {error && <div className="rounded border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>}
             <div>
               <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.35em] text-black/60">
                 University Email

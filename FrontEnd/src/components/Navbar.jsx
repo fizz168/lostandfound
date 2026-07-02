@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom'
 
-function Navbar({ authed, setAuthed }) {
+function Navbar({ authed, user, setAuthed, setUser, setToken }) {
   const navigate = useNavigate()
   const { pathname } = useLocation()
   const isLoginPage = pathname === '/login'
@@ -11,6 +11,8 @@ function Navbar({ authed, setAuthed }) {
     { path: '/browse', key: 'browse', label: 'Browse Items' },
     { path: '/admin', key: 'admin', label: 'Admin' },
   ]
+
+  const visibleNavItems = navItems.filter((item) => item.key !== 'admin' || user?.isAdmin)
 
   const brandIcon = (
     <span className="relative flex h-10 w-10 items-center justify-center border-2 border-black bg-[var(--color-background)] shadow-[3px_3px_0px_0px_#121212]">
@@ -51,7 +53,7 @@ function Navbar({ authed, setAuthed }) {
         </button>
 
         <div className="hidden items-center gap-2 md:flex">
-          {navItems.map((p) => (
+          {visibleNavItems.map((p) => (
             <button
               key={p.key}
               onClick={() => navigate(p.path)}
@@ -67,6 +69,8 @@ function Navbar({ authed, setAuthed }) {
             <button
               onClick={() => {
                 setAuthed(false)
+                setUser(null)
+                setToken('')
                 navigate('/')
               }}
               className="border-2 border-black bg-white px-4 py-2 text-sm font-bold uppercase tracking-[0.2em] shadow-[4px_4px_0px_0px_#121212] transition-all duration-200 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"

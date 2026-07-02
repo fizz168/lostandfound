@@ -44,7 +44,7 @@ router.delete('/items/:id', async (req, res) => {
 router.get('/users', async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'full_name', 'email', 'role', 'createdAt'],
+      attributes: ['id', 'name', 'email', 'isAdmin', 'createdAt'],
       order: [['createdAt', 'DESC']],
     })
     res.json(users)
