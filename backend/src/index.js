@@ -6,6 +6,8 @@ const itemsRouter = require('./routes/items');
 const claimsRouter = require('./routes/claims');
 const activitiesRouter = require('./routes/activities');
 const usersRouter = require('./routes/users');
+const authRouter = require('./routes/authRoutes');
+const adminRouter = require('./routes/adminRoutes');
 
 const app = express();
 app.use(cors());
@@ -15,6 +17,8 @@ app.use('/api/items', itemsRouter);
 app.use('/api/claims', claimsRouter);
 app.use('/api/activities', activitiesRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/auth', authRouter);
+app.use('/api/admin', adminRouter);
 
 const PORT = process.env.PORT || 4000;
 
