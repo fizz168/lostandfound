@@ -53,8 +53,8 @@ function ReportForm({ type, addItem }) {
         throw new Error(err.error || 'Failed to submit report')
       }
 
-      const created = await res.json()
-      if (addItem) addItem(created)
+      await res.json()
+      if (addItem) addItem()
       setSubmitted(true)
     } catch (err) {
       // basic error handling; show browser alert for now

@@ -16,7 +16,7 @@ function App() {
     window.localStorage.setItem('lostandfound-authed', String(authed))
   }, [authed])
 
-  useEffect(() => {
+  const fetchItems = () => {
     fetch('/api/items')
       .then((res) => res.json())
       .then((data) => {
@@ -28,13 +28,17 @@ function App() {
       .finally(() => {
         setLoading(false)
       })
+  }
+
+  useEffect(() => {
+    fetchItems()
   }, [])
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
       <Navbar authed={authed} setAuthed={setAuthed} />
       <main>
-        <AppRoutes items={items} addItem={setItems} authed={authed} setAuthed={setAuthed} />
+        <AppRoutes items={items} addItem={fetchItems} authed={authed} setAuthed={setAuthed} />
       </main>
       <Footer />
     </div>
