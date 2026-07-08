@@ -10,6 +10,9 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/authRoutes');
 const adminRouter = require('./routes/adminRoutes');
 
+const upload = require('./middleware/upload')
+
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -33,5 +36,18 @@ async function start() {
     process.exit(1);
   }
 }
+
+
+// Serve uploaded images as static files
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
+
+// Upload endpoint
+app.post('/api/upload', upload.single('image'), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded.' })
+  }
+  const imageUrl = `http://localhost:4000/uploads/${req.file.filename}`
+  res.json({ url: imageUrl })
+})
 
 start();

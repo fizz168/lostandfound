@@ -15,7 +15,8 @@ function Browse({ items }) {
     const matchSearch = !search || item.name.toLowerCase().includes(search.toLowerCase()) || item.description.toLowerCase().includes(search.toLowerCase()) || item.location.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === "All Items" || (typeFilter === "Lost" ? item.type === "lost" : item.type === "found");
     const matchCat = catFilter === "All Categories" || item.category === catFilter;
-    const matchStatus = statusFilter === "All Status" || item.status === statusFilter.toLowerCase();
+    const normalizedStatus = item.status?.toLowerCase();
+    const matchStatus = statusFilter === "All Status" || normalizedStatus === statusFilter.toLowerCase() || (statusFilter.toLowerCase() === "claim" && ["claim", "claimed"].includes(normalizedStatus));
     return matchSearch && matchType && matchCat && matchStatus;
   });
  
@@ -32,7 +33,7 @@ function Browse({ items }) {
         {[
           { label: "Type", value: typeFilter, options: ["All Items","Lost","Found"], set: setTypeFilter },
           { label: "Category", value: catFilter, options: categories, set: setCatFilter },
-          { label: "Status", value: statusFilter, options: ["All Status","found","lost"], set: setStatusFilter },
+          { label: "Status", value: statusFilter, options: ["All Status","found","lost", "claim"], set: setStatusFilter },
         ].map(f => (
           <div key={f.label} className="flex flex-col gap-1">
             <span className="text-xs text-gray-500 font-medium">{f.label}</span>
