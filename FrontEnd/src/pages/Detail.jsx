@@ -1,15 +1,22 @@
-import { Navigate, useNavigate, useParams } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import StatusBadge from '../components/Statusbadge'
 
 function Detail({ items }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const { id } = useParams()
+  const fromAdmin = location.state?.fromAdmin
   const item = items.find(entry => String(entry.id) === String(id))
 
   if (!item) return <Navigate to="/browse" replace />;
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
-      <button onClick={() => navigate("/")} className="text-sm text-indigo-600 hover:underline mb-6 flex items-center gap-1">← Back</button>
+      <button
+        onClick={() => navigate(fromAdmin ? '/admin' : '/')}
+        className="text-sm text-indigo-600 hover:underline mb-6 flex items-center gap-1"
+      >
+        ← Back
+      </button>
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <img src={item.img} alt={item.name} className="w-full h-56 object-cover" />
         <div className="p-6">

@@ -69,7 +69,7 @@ export default function AppRoutes({ items, addItem, authed, user, setAuthed, set
         path="/admin"
         element={
           <RequireAdmin authed={authed} user={user}>
-            <Admin />
+            <Admin items={items} addItem={addItem} />
           </RequireAdmin>
         }
       />
