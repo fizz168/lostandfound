@@ -7,6 +7,7 @@ function Admin({ items = [], addItem }) {
   const [claimsLoading, setClaimsLoading] = useState(true)
   const [actionLoading, setActionLoading] = useState(false)
   const itemCount = items.length
+  const pendingClaims = claims.filter((claim) => claim.status === 'pending')
 
   const getToken = () => (typeof window !== 'undefined' ? window.localStorage.getItem('lostandfound-token') : '')
 
@@ -108,7 +109,7 @@ function Admin({ items = [], addItem }) {
             <p className="text-xs text-gray-400">Review incoming claim requests and approve or deny them.</p>
           </div>
           <div className="text-xs text-gray-500">
-            {claimsLoading ? 'Loading requests…' : `${claims.filter((claim) => claim.status === 'pending').length} pending`}
+            {claimsLoading ? 'Loading requests…' : `${pendingClaims.length} pending`}
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -128,12 +129,12 @@ function Admin({ items = [], addItem }) {
                 <tr className="border-t border-gray-50">
                   <td colSpan="6" className="px-5 py-6 text-center text-gray-500">Loading claim requests...</td>
                 </tr>
-              ) : claims.length === 0 ? (
+              ) : pendingClaims.length === 0 ? (
                 <tr className="border-t border-gray-50">
-                  <td colSpan="6" className="px-5 py-6 text-center text-gray-500">No claim requests yet.</td>
+                  <td colSpan="6" className="px-5 py-6 text-center text-gray-500">No pending claim requests.</td>
                 </tr>
               ) : (
-                claims.map((claim) => (
+                pendingClaims.map((claim) => (
                   <tr key={claim.id} className="border-t border-gray-50 hover:bg-gray-50 transition-colors">
                     <td className="px-5 py-3 font-medium text-gray-800">{claim.Item?.name || 'Unknown item'}</td>
                     <td className="px-5 py-3 text-gray-600">
@@ -145,14 +146,14 @@ function Admin({ items = [], addItem }) {
                     <td className="px-5 py-3 text-gray-600">{new Date(claim.createdAt).toLocaleString()}</td>
                     <td className="px-5 py-3">
                       <button
-                        disabled={actionLoading || claim.status !== 'pending'}
+                        disabled={actionLoading}
                         onClick={() => updateClaimStatus(claim.id, 'approved')}
                         className="text-xs text-indigo-600 hover:underline mr-2 disabled:text-gray-300 disabled:hover:underline"
                       >
                         Approve
                       </button>
                       <button
-                        disabled={actionLoading || claim.status !== 'pending'}
+                        disabled={actionLoading}
                         onClick={() => updateClaimStatus(claim.id, 'denied')}
                         className="text-xs text-red-500 hover:underline disabled:text-gray-300 disabled:hover:underline"
                       >
