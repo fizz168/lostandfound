@@ -6,13 +6,14 @@ function Detail({ items }) {
   const location = useLocation()
   const { id } = useParams()
   const fromAdmin = location.state?.fromAdmin
+  const fromBrowse = location.state?.fromBrowse
   const item = items.find(entry => String(entry.id) === String(id))
 
   if (!item) return <Navigate to="/browse" replace />;
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <button
-        onClick={() => navigate(fromAdmin ? '/admin' : '/')}
+        onClick={() => navigate(fromAdmin ? '/admin' : fromBrowse ? '/browse' : '/')}
         className="text-sm text-indigo-600 hover:underline mb-6 flex items-center gap-1"
       >
         ← Back

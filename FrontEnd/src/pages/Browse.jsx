@@ -48,7 +48,7 @@ function Browse({ items }) {
       {filtered.length === 0
         ? <div className="text-center py-20 text-gray-400">No items match your search.</div>
         : <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {filtered.map(item => <ItemCard key={item.id} item={item} onClick={() => navigate(`/detail/${item.id}`)} />)}
+            {filtered.map(item => <ItemCard key={item.id} item={item} onClick={() => navigate(`/detail/${item.id}`, { state: { fromBrowse: true } })} />)}
           </div>
       }
     </div>

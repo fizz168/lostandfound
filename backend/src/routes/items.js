@@ -26,18 +26,16 @@ router.post('/', async (req, res) => {
   }
 });
 
-// Claim an item: create a Claim record and update item status
+// Claim an item: create a request for admin review
 router.post('/:id/claim', async (req, res) => {
-  const item = await Item.findByPk(req.params.id);
-  if (!item) return res.status(404).json({ error: 'Not found' });
+  const item = await Item.findByPk(req.params.id)
+  if (!item) return res.status(404).json({ error: 'Not found' })
 
   const { claimant = {}, reason } = req.body;
 
   try {
-    const claim = await Claim.create({ claimantName: claimant.name, claimantEmail: claimant.email, reason, itemId: item.id });
-    item.status = 'claimed';
-    await item.save();
-    await Activity.create({ action: 'item_claimed', details: reason || '', itemId: item.id, userName: claimant.name, userEmail: claimant.email });
+    const claim = await Claim.create({ claimantName: claimant.name, claimantEmail: claimant.email, reason, itemId: item.id, status: 'pending' });
+    await Activity.create({ action: 'claim_requested', details: reason || '', itemId: item.id, userName: claimant.name, userEmail: claimant.email });
     res.json({ success: true, item, claim });
   } catch (err) {
     res.status(400).json({ error: err.message });

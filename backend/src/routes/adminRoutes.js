@@ -2,6 +2,8 @@ const express = require('express')
 const router = express.Router()
 const Item = require('../models/Item')
 const User = require('../models/User')
+const Claim = require('../models/Claim')
+const Activity = require('../models/Activity')
 const { verifyToken, requireAdmin } = require('../middleware/auth')
 
 router.use(verifyToken, requireAdmin)
@@ -50,6 +52,45 @@ router.get('/users', async (req, res) => {
     res.json(users)
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch users.' })
+  }
+})
+
+router.get('/claims', async (req, res) => {
+  try {
+    const claims = await Claim.findAll({ include: [Item], order: [['createdAt', 'DESC']] })
+    res.json(claims)
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch claims.' })
+  }
+})
+
+router.patch('/claims/:id', async (req, res) => {
+  const { status } = req.body
+  if (!['approved', 'denied'].includes(status)) {
+    return res.status(400).json({ error: 'Invalid status.' })
+  }
+
+  try {
+    const claim = await Claim.findByPk(req.params.id, { include: [Item] })
+    if (!claim) return res.status(404).json({ error: 'Claim not found.' })
+
+    claim.status = status
+    await claim.save()
+
+    const item = claim.Item
+    if (status === 'approved' && item) {
+      item.status = 'claimed'
+      await item.save()
+      await Activity.create({ action: 'claim_approved', details: claim.reason || '', itemId: item.id, userName: req.user.name, userEmail: req.user.email })
+    }
+
+    if (status === 'denied') {
+      await Activity.create({ action: 'claim_denied', details: claim.reason || '', itemId: claim.itemId, userName: req.user.name, userEmail: req.user.email })
+    }
+
+    res.json({ message: 'Claim status updated.', claim })
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update claim status.' })
   }
 })
 
