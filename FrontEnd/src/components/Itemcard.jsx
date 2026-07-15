@@ -1,3 +1,5 @@
+import { getImageUrl } from '../api'
+
 function StatusBadge({ item }) {
   const normalizedStatus = (item?.status || item?.type || 'found').toLowerCase()
   const isClaim = ['claim', 'claimed'].includes(normalizedStatus)
@@ -16,16 +18,7 @@ function StatusBadge({ item }) {
 }
 
 function ItemCard({ item, onClick }) {
-  const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
-  
-  const getImageUrl = (imgPath) => {
-    if (!imgPath) return 'https://via.placeholder.com/150'
-    if (imgPath.startsWith('http')) return imgPath
-    if (imgPath.startsWith('/')) return `${apiBase}${imgPath}`
-    return imgPath
-  }
-
-  const imageUrl = getImageUrl(item.img)
+  const imageUrl = getImageUrl(item.img) || 'https://via.placeholder.com/150'
 
   return (
     <div

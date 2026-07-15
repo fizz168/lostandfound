@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import StatusBadge from '../components/Statusbadge'
+import { getApiUrl } from '../api'
 
 function Admin({ items = [], addItem }) {
   const navigate = useNavigate()
@@ -16,7 +17,7 @@ function Admin({ items = [], addItem }) {
     setClaimsLoading(true)
     try {
       const token = getToken()
-      const response = await fetch('/api/admin/claims', {
+      const response = await fetch(getApiUrl('/api/admin/claims'), {
         headers: {
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
@@ -40,7 +41,7 @@ function Admin({ items = [], addItem }) {
     setActionLoading(true)
     try {
       const token = getToken()
-      const response = await fetch(`/api/admin/claims/${id}`, {
+      const response = await fetch(getApiUrl(`/api/admin/claims/${id}`), {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ function Admin({ items = [], addItem }) {
 
     const token = window.localStorage.getItem('lostandfound-token')
     try {
-      const response = await fetch(`/api/admin/items/${id}`, {
+      const response = await fetch(getApiUrl(`/api/admin/items/${id}`), {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

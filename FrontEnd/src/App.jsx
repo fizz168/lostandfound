@@ -3,6 +3,7 @@ import './App.css'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import AppRoutes from './routes/Approutes'
+import { getApiUrl } from './api'
 
 function App() {
   const [token, setToken] = useState(() => {
@@ -43,7 +44,7 @@ function App() {
 
     const fetchUser = async () => {
       try {
-        const res = await fetch('/api/auth/me', {
+        const res = await fetch(getApiUrl('/api/auth/me'), {
           headers: { Authorization: `Bearer ${token}` },
         })
         if (!res.ok) throw new Error('Unauthorized')
@@ -62,7 +63,7 @@ function App() {
   }, [token, user])
 
   const fetchItems = () => {
-    fetch('/api/items')
+    fetch(getApiUrl('/api/items'))
       .then((res) => res.json())
       .then((data) => {
         setItems(Array.isArray(data) ? data : [])

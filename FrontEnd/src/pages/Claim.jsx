@@ -1,5 +1,6 @@
 import { useNavigate, useParams } from 'react-router-dom'
 import { useState } from 'react'
+import { getApiUrl } from '../api'
 
 function Claim({ items }) {
   const navigate = useNavigate()
@@ -17,14 +18,12 @@ function Claim({ items }) {
     return null
   }
 
-  const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
-
   async function handleSubmit(e) {
     e.preventDefault()
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch(`${apiBase}/api/items/${item.id}/claim`, {
+      const res = await fetch(getApiUrl(`/api/items/${item.id}/claim`), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ claimant: { name, email }, reason }),

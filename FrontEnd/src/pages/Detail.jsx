@@ -1,23 +1,16 @@
 import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom'
 import StatusBadge from '../components/Statusbadge'
+import { getImageUrl } from '../api'
 
 function Detail({ items }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams()
-  const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
   const fromAdmin = location.state?.fromAdmin
   const fromBrowse = location.state?.fromBrowse
   const item = items.find(entry => String(entry.id) === String(id))
 
-  const getImageUrl = (imgPath) => {
-    if (!imgPath) return 'https://via.placeholder.com/300'
-    if (imgPath.startsWith('http')) return imgPath
-    if (imgPath.startsWith('/')) return `${apiBase}${imgPath}`
-    return imgPath
-  }
-
-  const imageUrl = getImageUrl(item?.img)
+  const imageUrl = getImageUrl(item?.img) || 'https://via.placeholder.com/300'
 
   if (!item) return <Navigate to="/browse" replace />;
   return (
