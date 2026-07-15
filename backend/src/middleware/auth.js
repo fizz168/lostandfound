@@ -13,7 +13,8 @@ const verifyToken = (req, res, next) => {
 }
 
 const requireAdmin = (req, res, next) => {
-  if (!req.user?.isAdmin) {
+  const isAdmin = req.user?.role === 'admin' || req.user?.isAdmin
+  if (!isAdmin) {
     return res.status(403).json({ error: 'Admins only.' })
   }
   next()

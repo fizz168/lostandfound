@@ -12,7 +12,7 @@ function Navbar({ authed, user, setAuthed, setUser, setToken }) {
     { path: '/admin', key: 'admin', label: 'Admin' },
   ]
 
-  const visibleNavItems = navItems.filter((item) => item.key !== 'admin' || user?.isAdmin)
+  const visibleNavItems = navItems.filter((item) => item.key !== 'admin' || user?.role === 'admin')
 
   const brandIcon = (
     <span className="relative flex h-10 w-10 items-center justify-center border-2 border-black bg-[var(--color-background)] shadow-[3px_3px_0px_0px_#121212]">
