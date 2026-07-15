@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import StatusBadge from '../components/Statusbadge'
 
 function Admin({ items = [], addItem }) {
   const navigate = useNavigate()
@@ -193,7 +194,9 @@ function Admin({ items = [], addItem }) {
                 <tr key={item.id} className="border-t border-gray-50 hover:bg-gray-50 transition-colors">
                   <td className="px-5 py-3 font-medium text-gray-800">{item.name}</td>
                   <td className="px-5 py-3 text-gray-600">{item.category}</td>
-                  <td className="px-5 py-3 text-gray-600 capitalize">{item.status || item.type}</td>
+                  <td className="px-5 py-3">
+                    <StatusBadge item={item} />
+                  </td>
                   <td className="px-5 py-3 text-gray-600">{item.reporter}</td>
                   <td className="px-5 py-3">
                     <button

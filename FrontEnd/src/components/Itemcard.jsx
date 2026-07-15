@@ -1,13 +1,16 @@
 function StatusBadge({ item }) {
-  const isLost = item.type === 'lost'
+  const normalizedStatus = (item?.status || item?.type || 'found').toLowerCase()
+  const isClaim = ['claim', 'claimed'].includes(normalizedStatus)
+  const isLost = item?.type === 'lost' && !isClaim
+  const label = isClaim ? 'Claim' : isLost ? 'Lost' : 'Found'
 
   return (
     <span
       className={`shrink-0 border-2 border-black px-2 py-0.5 text-[10px] font-black uppercase tracking-[0.2em] ${
-        isLost ? 'bg-[#D02020] text-white' : 'bg-[#1040C0] text-white'
+        isClaim ? 'bg-[#7C3AED] text-white' : isLost ? 'bg-[#D02020] text-white' : 'bg-[#1040C0] text-white'
       }`}
     >
-      {item.type || 'Lost'}
+      {label}
     </span>
   )
 }
