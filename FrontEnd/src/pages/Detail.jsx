@@ -5,9 +5,19 @@ function Detail({ items }) {
   const navigate = useNavigate()
   const location = useLocation()
   const { id } = useParams()
+  const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
   const fromAdmin = location.state?.fromAdmin
   const fromBrowse = location.state?.fromBrowse
   const item = items.find(entry => String(entry.id) === String(id))
+
+  const getImageUrl = (imgPath) => {
+    if (!imgPath) return 'https://via.placeholder.com/300'
+    if (imgPath.startsWith('http')) return imgPath
+    if (imgPath.startsWith('/')) return `${apiBase}${imgPath}`
+    return imgPath
+  }
+
+  const imageUrl = getImageUrl(item?.img)
 
   if (!item) return <Navigate to="/browse" replace />;
   return (
@@ -19,7 +29,7 @@ function Detail({ items }) {
         ← Back
       </button>
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <img src={item.img} alt={item.name} className="w-full h-56 object-cover" />
+        <img src={imageUrl} alt={item.name} className="w-full h-56 object-cover" />
         <div className="p-6">
           <div className="flex items-start justify-between gap-3 mb-3">
             <h1 className="text-xl font-bold text-gray-800">{item.name}</h1>

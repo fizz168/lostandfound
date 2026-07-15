@@ -16,6 +16,17 @@ function StatusBadge({ item }) {
 }
 
 function ItemCard({ item, onClick }) {
+  const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
+  
+  const getImageUrl = (imgPath) => {
+    if (!imgPath) return 'https://via.placeholder.com/150'
+    if (imgPath.startsWith('http')) return imgPath
+    if (imgPath.startsWith('/')) return `${apiBase}${imgPath}`
+    return imgPath
+  }
+
+  const imageUrl = getImageUrl(item.img)
+
   return (
     <div
       onClick={onClick}
@@ -24,7 +35,7 @@ function ItemCard({ item, onClick }) {
       <div className="relative h-44 bg-[#E0E0E0]">
         <span className="absolute right-3 top-3 h-5 w-5 rounded-full border-2 border-black bg-[#F0C020]" />
         <img
-          src={item.img || 'https://via.placeholder.com/150'}
+          src={imageUrl}
           alt={item.name}
           className="h-full w-full object-cover duration-300 hover:grayscale-0"
         />

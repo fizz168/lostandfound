@@ -204,7 +204,8 @@
 //         throw new Error(errData.error || 'Upload failed')
 //       }
 //       const data = await res.json()
-//       setImageUrl(data.url)
+//       const fullImageUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`
+//       setImageUrl(fullImageUrl)
 //     } catch (err) {
 //       console.error('Upload error:', err)
 //       alert(`Image upload failed: ${err.message}`)
@@ -406,7 +407,7 @@ function ReportForm({ type, addItem }) {
     setUploading(true)
 
     try {
-      const apiBase = import.meta.env.VITE_API_BASE || ''
+      const apiBase = import.meta.env.VITE_API_BASE || 'http://localhost:4000'
       const res = await fetch(`${apiBase}/api/upload`, {
         method: 'POST',
         body: formData,
@@ -416,7 +417,8 @@ function ReportForm({ type, addItem }) {
         throw new Error(errData.error || 'Upload failed')
       }
       const data = await res.json()
-      setImageUrl(data.url)
+      const fullImageUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`
+      setImageUrl(fullImageUrl)
     } catch (err) {
       console.error('Upload error:', err)
       alert(`Image upload failed: ${err.message}`)
