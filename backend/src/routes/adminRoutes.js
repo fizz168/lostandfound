@@ -2,6 +2,7 @@ const express = require('express')
 const router = express.Router()
 const Item = require('../models/Item')
 const User = require('../models/User')
+const Role = require('../models/Role')
 const Claim = require('../models/Claim')
 const Activity = require('../models/Activity')
 const { verifyToken, requireAdmin } = require('../middleware/auth')
@@ -46,10 +47,19 @@ router.delete('/items/:id', async (req, res) => {
 router.get('/users', async (req, res) => {
   try {
     const users = await User.findAll({
-      attributes: ['id', 'name', 'email', 'isAdmin', 'createdAt'],
+      attributes: ['id', 'name', 'email', 'createdAt'],
+      include: [{ model: Role, attributes: ['name'] }],
       order: [['createdAt', 'DESC']],
     })
-    res.json(users)
+    const normalized = users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.Role?.name || 'user',
+      isAdmin: user.Role?.name === 'admin',
+      createdAt: user.createdAt,
+    }))
+    res.json(normalized)
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch users.' })
   }

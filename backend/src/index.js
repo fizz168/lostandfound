@@ -9,6 +9,7 @@ const activitiesRouter = require('./routes/activities');
 const usersRouter = require('./routes/users');
 const authRouter = require('./routes/authRoutes');
 const adminRouter = require('./routes/adminRoutes');
+const Role = require('./models/Role');
 
 const upload = require('./middleware/upload')
 
@@ -30,6 +31,10 @@ async function start() {
   try {
     await sequelize.authenticate();
     await sequelize.sync();
+    await Promise.all([
+      Role.findOrCreate({ where: { name: 'user' } }),
+      Role.findOrCreate({ where: { name: 'admin' } }),
+    ])
     app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
   } catch (err) {
     console.error('Failed to start server', err);
