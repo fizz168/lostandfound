@@ -199,10 +199,15 @@
 //         method: 'POST',
 //         body: formData,
 //       })
+//       if (!res.ok) {
+//         const errData = await res.json()
+//         throw new Error(errData.error || 'Upload failed')
+//       }
 //       const data = await res.json()
 //       setImageUrl(data.url)
-//     } catch {
-//       alert('Image upload failed.')
+//     } catch (err) {
+//       console.error('Upload error:', err)
+//       alert(`Image upload failed: ${err.message}`)
 //     } finally {
 //       setUploading(false)
 //     }
@@ -406,10 +411,15 @@ function ReportForm({ type, addItem }) {
         method: 'POST',
         body: formData,
       })
+      if (!res.ok) {
+        const errData = await res.json()
+        throw new Error(errData.error || 'Upload failed')
+      }
       const data = await res.json()
       setImageUrl(data.url)
-    } catch {
-      alert('Image upload failed.')
+    } catch (err) {
+      console.error('Upload error:', err)
+      alert(`Image upload failed: ${err.message}`)
     } finally {
       setUploading(false)
     }

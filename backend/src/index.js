@@ -2,6 +2,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const express = require('express');
 const cors = require('cors');
+const fs = require('fs');
 const sequelize = require('./db');
 const itemsRouter = require('./routes/items');
 const claimsRouter = require('./routes/claims');
@@ -29,6 +30,11 @@ const PORT = process.env.PORT || 4000;
 
 async function start() {
   try {
+    const uploadsDir = path.join(__dirname, '../uploads');
+    if (!fs.existsSync(uploadsDir)) {
+      fs.mkdirSync(uploadsDir, { recursive: true });
+    }
+    
     await sequelize.authenticate();
     await sequelize.sync();
     await Promise.all([
@@ -51,8 +57,23 @@ app.post('/api/upload', upload.single('image'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded.' })
   }
-  const imageUrl = `http://localhost:4000/uploads/${req.file.filename}`
+  const baseUrl = process.env.BACKEND_URL || `http://localhost:${PORT}`
+  const imageUrl = `${baseUrl}/uploads/${req.file.filename}`
   res.json({ url: imageUrl })
+})
+
+// Multer error handler
+app.use((err, req, res, next) => {
+  if (err && err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(400).json({ error: 'File too large. Max 5MB.' })
+    }
+    return res.status(400).json({ error: 'Upload failed.' })
+  }
+  if (err && err.message === 'Only images are allowed') {
+    return res.status(400).json({ error: 'Only image files are allowed.' })
+  }
+  next(err)
 })
 
 start();
