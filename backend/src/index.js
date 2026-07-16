@@ -1,8 +1,6 @@
-const path = require('path');
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const fs = require('fs');
 const sequelize = require('./db');
 const itemsRouter = require('./routes/items');
 const claimsRouter = require('./routes/claims');
@@ -11,9 +9,15 @@ const usersRouter = require('./routes/users');
 const authRouter = require('./routes/authRoutes');
 const adminRouter = require('./routes/adminRoutes');
 const Role = require('./models/Role');
+const cloudinary = require('cloudinary').v2;
 
 const upload = require('./middleware/upload')
 
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 const app = express();
 app.use(cors());
@@ -30,11 +34,6 @@ const PORT = process.env.PORT || 4000;
 
 async function start() {
   try {
-    const uploadsDir = path.join(__dirname, '../uploads');
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true });
-    }
-    
     await sequelize.authenticate();
     await sequelize.sync();
     await Promise.all([
@@ -48,31 +47,47 @@ async function start() {
   }
 }
 
-
-// Serve uploaded images as static files
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')))
-
 // Upload endpoint
-app.post('/api/upload', upload.single('image'), (req, res) => {
+app.post('/api/upload', upload.single('image'), async (req, res, next) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded.' })
   }
-  const imageUrl = `/uploads/${req.file.filename}`
-  res.json({ url: imageUrl })
+
+  const dataUri = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`
+
+  try {
+    const result = await cloudinary.uploader.upload(dataUri, {
+      folder: 'lostandfound',
+      resource_type: 'image',
+    })
+
+    res.json({ url: result.secure_url })
+  } catch (err) {
+    next(err)
+  }
 })
 
-// Multer error handler
+// Error handler
 app.use((err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err)
+  }
+
   if (err && err.name === 'MulterError') {
     if (err.code === 'LIMIT_FILE_SIZE') {
       return res.status(400).json({ error: 'File too large. Max 5MB.' })
     }
     return res.status(400).json({ error: 'Upload failed.' })
   }
+
   if (err && err.message === 'Only images are allowed') {
     return res.status(400).json({ error: 'Only image files are allowed.' })
   }
-  next(err)
+
+  const status = err.statusCode || err.status || 500
+  const message = err.message || 'Internal server error'
+  console.error('Upload error:', err)
+  res.status(status).json({ error: message })
 })
 
 start();

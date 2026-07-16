@@ -413,8 +413,15 @@ function ReportForm({ type, addItem }) {
         body: formData,
       })
       if (!res.ok) {
-        const errData = await res.json()
-        throw new Error(errData.error || 'Upload failed')
+        const text = await res.text()
+        let errMessage = 'Upload failed'
+        try {
+          const errData = JSON.parse(text)
+          errMessage = errData.error || errMessage
+        } catch {
+          errMessage = text || errMessage
+        }
+        throw new Error(errMessage)
       }
       const data = await res.json()
       const fullImageUrl = data.url.startsWith('http') ? data.url : `${apiBase}${data.url}`
